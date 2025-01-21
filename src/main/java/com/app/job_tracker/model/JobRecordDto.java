@@ -2,6 +2,7 @@ package com.app.job_tracker.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +30,13 @@ public class JobRecordDto {
     private String jobDescription;
     private String sourceOfJobListing;
     private String followUpDate;
+
+    @Pattern(
+            regexp = "\\d{4}-\\d{2}-\\d{2}", // Matches format yyyy-MM-dd
+            message = "Event date must be in the format yyyy-MM-dd"
+    )
     private String interviewDate;
+
     private String offerDetails;
     private String notes;
     private String outcome;

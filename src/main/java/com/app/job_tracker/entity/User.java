@@ -1,11 +1,9 @@
 package com.app.job_tracker.entity;
 
+import com.app.job_tracker.model.UserDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +13,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 public class User {
 
     @Id
@@ -34,6 +31,12 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobRecord> jobApplications;
 
+    public User(){}
+    public User(String email, String username, String password){
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
     public String getEmail() {
         return email;
     }
@@ -56,5 +59,9 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static User fromDto(UserDto userDto){
+        return new User(userDto.getEmail(), userDto.getUsername(), userDto.getPassword());
     }
 }

@@ -2,6 +2,7 @@ package com.app.job_tracker.service;
 
 import com.app.job_tracker.entity.User;
 import com.app.job_tracker.model.LoginCreds;
+import com.app.job_tracker.model.UserDto;
 import com.app.job_tracker.repository.UserRepo;
 import com.app.job_tracker.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -30,10 +32,13 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Map<String, Object> registerUser(User user ){
-        String encodedPass = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPass);
-        user = userRepo.save(user);
+    public Map<String, Object> registerUser(UserDto userdto ){
+        // Encode the password
+        String encodedPass = passwordEncoder.encode(userdto.getPassword());
+        userdto.setPassword(encodedPass);
+
+        // Save the user with the encoded password
+        User user = userRepo.save(User.fromDto(userdto));
 
         return createJWTforUser(user.getUsername());
     }
@@ -42,6 +47,7 @@ public class AuthService {
 
         UsernamePasswordAuthenticationToken authInputToken =
                 new UsernamePasswordAuthenticationToken(body.getUsername(), body.getPassword());
+        System.out.println("authInputToken "+authInputToken.getCredentials().toString());
         authenticationManager.authenticate(authInputToken);
 
         return createJWTforUser(body.getUsername());
